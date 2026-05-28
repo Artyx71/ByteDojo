@@ -14,13 +14,13 @@ interface SessionViewProps {
 }
 
 export function SessionView({ scenario, allScenarios }: SessionViewProps) {
-  const { startSession, status } = useSessionStore()
+  const { startSession, session } = useSessionStore()
 
   useEffect(() => {
-    if (status === 'idle') {
+    if (session?.scenarioId !== scenario.id) {
       startSession(scenario)
     }
-  }, [scenario, status, startSession])
+  }, [scenario.id])
 
   return (
     <div className="h-full flex flex-col overflow-hidden">
