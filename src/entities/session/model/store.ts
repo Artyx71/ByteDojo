@@ -11,6 +11,7 @@ interface SessionStore {
   keystrokeHistory: string[]
   hintsUsed: number
   startedAt: number | null
+  stepStartedAt: number | null
   stepResults: StepResult[]
 
   startSession: (scenario: Scenario) => void
@@ -29,15 +30,17 @@ export const useSessionStore = create<SessionStore>()(
       keystrokeHistory: [],
       hintsUsed: 0,
       startedAt: null,
+      stepStartedAt: null,
       stepResults: [],
 
       startSession: (scenario) => {
+        const now = Date.now()
         const session: Session = {
-          id: `session-${Date.now()}`,
+          id: `session-${now}`,
           scenarioId: scenario.id,
           status: 'active',
           currentStepIndex: 0,
-          startedAt: Date.now(),
+          startedAt: now,
           completedAt: null,
           stepResults: [],
         }
@@ -48,13 +51,14 @@ export const useSessionStore = create<SessionStore>()(
           status: 'active',
           keystrokeHistory: [],
           hintsUsed: 0,
-          startedAt: Date.now(),
+          startedAt: now,
+          stepStartedAt: now,
           stepResults: [],
         })
       },
 
       submitCommand: (input) => {
-        const { scenario, currentStepIndex, keystrokeHistory, hintsUsed, startedAt, stepResults } = get()
+        const { scenario, currentStepIndex, keystrokeHistory, hintsUsed, stepStartedAt, stepResults } = get()
         if (!scenario) return false
 
         const step = scenario.steps[currentStepIndex]
@@ -64,12 +68,14 @@ export const useSessionStore = create<SessionStore>()(
           ? step.validate(input)
           : step.expectedCommands.includes(input)
 
+        const now = Date.now()
+
         const result: StepResult = {
           stepId: step.id,
           input,
           correct,
           keystrokes: input.length,
-          timeMs: startedAt ? Date.now() - startedAt : 0,
+          timeMs: stepStartedAt ? now - stepStartedAt : 0,
           hintsUsed,
         }
 
@@ -83,6 +89,7 @@ export const useSessionStore = create<SessionStore>()(
           stepResults: updatedResults,
           currentStepIndex: nextIndex,
           hintsUsed: 0,
+          stepStartedAt: correct ? now : stepStartedAt,
           status: isCompleted ? 'completed' : 'active',
         })
 
@@ -102,6 +109,7 @@ export const useSessionStore = create<SessionStore>()(
           keystrokeHistory: [],
           hintsUsed: 0,
           startedAt: null,
+          stepStartedAt: null,
           stepResults: [],
         })
       },
