@@ -1,3 +1,7 @@
+import { notFound } from 'next/navigation'
+import { scenarioService } from '@/services/scenarios'
+import { SessionView } from './SessionView'
+
 interface SessionPageProps {
   params: Promise<{ id: string }>
 }
@@ -5,12 +9,12 @@ interface SessionPageProps {
 export default async function SessionPage({ params }: SessionPageProps) {
   const { id } = await params
 
-  return (
-    <main className="flex-1 p-6">
-      <h1 className="font-mono text-[var(--text-2)] text-sm uppercase tracking-widest mb-6">
-        session / {id}
-      </h1>
-      <p className="text-[var(--text-3)] font-mono text-xs">— coming soon —</p>
-    </main>
-  )
+  const [scenario, allScenarios] = await Promise.all([
+    scenarioService.getById(id),
+    scenarioService.getAll(),
+  ])
+
+  if (!scenario) notFound()
+
+  return <SessionView scenario={scenario} allScenarios={allScenarios} />
 }
