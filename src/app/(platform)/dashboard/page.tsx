@@ -1,6 +1,7 @@
 import { statsService } from '@/services/stats'
 import { sessionService } from '@/services/sessions'
 import { scenarioService } from '@/services/scenarios'
+import { stripAllScenarioFunctions } from '@/shared/lib'
 import { DashboardView } from './DashboardView'
 
 export default async function DashboardPage() {
@@ -20,7 +21,7 @@ export default async function DashboardPage() {
     <DashboardView
       stats={stats}
       recentSession={recentSessions[0] ?? null}
-      scenarios={scenarios}
+      scenarios={stripAllScenarioFunctions(scenarios)}
       completedScenarioIds={completedScenarioIds}
     />
   )

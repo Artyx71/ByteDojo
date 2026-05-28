@@ -1,5 +1,6 @@
 import { scenarioService } from '@/services/scenarios'
 import { sessionService } from '@/services/sessions'
+import { stripAllScenarioFunctions } from '@/shared/lib'
 import { TrainView } from './TrainView'
 
 export default async function TrainPage() {
@@ -14,5 +15,10 @@ export default async function TrainPage() {
       .map((s) => s.scenarioId)
   )
 
-  return <TrainView scenarios={scenarios} completedScenarioIds={completedScenarioIds} />
+  return (
+    <TrainView
+      scenarios={stripAllScenarioFunctions(scenarios)}
+      completedScenarioIds={completedScenarioIds}
+    />
+  )
 }
