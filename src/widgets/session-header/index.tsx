@@ -51,7 +51,7 @@ export function SessionHeader({ className }: SessionHeaderProps) {
         {scenario && (
           <>
             <span className="text-[var(--text-3)] shrink-0">/</span>
-            <span className="text-[var(--text-3)] shrink-0">scenarios</span>
+            <Link href={routes.train} className="text-[var(--text-3)] shrink-0 hover:text-[var(--text-2)] transition-colors">scenarios</Link>
             <span className="text-[var(--text-3)] shrink-0">/</span>
             <span className="text-[var(--text-2)] truncate">{scenario.id}</span>
           </>
