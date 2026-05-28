@@ -1,10 +1,27 @@
-export default function DashboardPage() {
+import { statsService } from '@/services/stats'
+import { sessionService } from '@/services/sessions'
+import { scenarioService } from '@/services/scenarios'
+import { DashboardView } from './DashboardView'
+
+export default async function DashboardPage() {
+  const [stats, recentSessions, scenarios] = await Promise.all([
+    statsService.get(),
+    sessionService.getRecent(1),
+    scenarioService.getAll(),
+  ])
+
+  const completedScenarioIds = new Set(
+    recentSessions
+      .filter((s) => s.status === 'completed')
+      .map((s) => s.scenarioId)
+  )
+
   return (
-    <main className="flex-1 p-6">
-      <h1 className="font-mono text-[var(--text-2)] text-sm uppercase tracking-widest mb-6">
-        dashboard
-      </h1>
-      <p className="text-[var(--text-3)] font-mono text-xs">— coming soon —</p>
-    </main>
+    <DashboardView
+      stats={stats}
+      recentSession={recentSessions[0] ?? null}
+      scenarios={scenarios}
+      completedScenarioIds={completedScenarioIds}
+    />
   )
 }

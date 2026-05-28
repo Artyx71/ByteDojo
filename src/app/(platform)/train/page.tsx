@@ -1,10 +1,18 @@
-export default function TrainPage() {
-  return (
-    <main className="flex-1 p-6">
-      <h1 className="font-mono text-[var(--text-2)] text-sm uppercase tracking-widest mb-6">
-        scenarios
-      </h1>
-      <p className="text-[var(--text-3)] font-mono text-xs">— coming soon —</p>
-    </main>
+import { scenarioService } from '@/services/scenarios'
+import { sessionService } from '@/services/sessions'
+import { TrainView } from './TrainView'
+
+export default async function TrainPage() {
+  const [scenarios, sessions] = await Promise.all([
+    scenarioService.getAll(),
+    sessionService.getAll(),
+  ])
+
+  const completedScenarioIds = new Set(
+    sessions
+      .filter((s) => s.status === 'completed')
+      .map((s) => s.scenarioId)
   )
+
+  return <TrainView scenarios={scenarios} completedScenarioIds={completedScenarioIds} />
 }
