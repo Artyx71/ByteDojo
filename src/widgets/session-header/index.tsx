@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { useSessionStore } from '@/entities/session/model/store'
 import { formatTime } from '@/shared/lib'
 import { routes } from '@/shared/config/routes'
@@ -43,9 +44,9 @@ export function SessionHeader({ className }: SessionHeaderProps) {
     >
       {/* Left: logo + breadcrumb */}
       <div className="flex items-center gap-2 font-mono text-xs min-w-0">
-        <span className="text-[var(--accent)] font-medium shrink-0">
+        <Link href={routes.dashboard} className="text-[var(--accent)] font-medium shrink-0 hover:opacity-80 transition-opacity">
           ByteDojo&nbsp;<span className="opacity-60">&gt;_</span>
-        </span>
+        </Link>
 
         {scenario && (
           <>
