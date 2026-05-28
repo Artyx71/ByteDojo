@@ -10,6 +10,7 @@ import { routes } from '@/shared/config/routes'
 interface ScenarioSidebarProps {
   scenarios: Scenario[]
   activeScenarioId?: string
+  completedScenarioIds?: Set<string>
   className?: string
 }
 
@@ -31,7 +32,7 @@ function groupByCategory(scenarios: Scenario[]): Map<Category, Scenario[]> {
   return map
 }
 
-export function ScenarioSidebar({ scenarios, activeScenarioId, className }: ScenarioSidebarProps) {
+export function ScenarioSidebar({ scenarios, activeScenarioId, completedScenarioIds = new Set(), className }: ScenarioSidebarProps) {
   const router = useRouter()
   const grouped = groupByCategory(scenarios)
   const categories = Array.from(grouped.keys())
@@ -48,7 +49,7 @@ export function ScenarioSidebar({ scenarios, activeScenarioId, className }: Scen
     })
   }
 
-  const completedCount = 0
+  const completedCount = scenarios.filter((s) => completedScenarioIds.has(s.id)).length
   const totalCount = scenarios.length
 
   return (
