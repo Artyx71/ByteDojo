@@ -1,9 +1,17 @@
 import { notFound } from 'next/navigation'
 import { scenarioService } from '@/services/scenarios'
+import type { Scenario } from '@/entities/scenario/model'
 import { SessionView } from './SessionView'
 
 interface SessionPageProps {
   params: Promise<{ id: string }>
+}
+
+function stripFunctions(scenario: Scenario): Scenario {
+  return {
+    ...scenario,
+    steps: scenario.steps.map(({ validate: _, ...step }) => step),
+  }
 }
 
 export default async function SessionPage({ params }: SessionPageProps) {
@@ -16,5 +24,10 @@ export default async function SessionPage({ params }: SessionPageProps) {
 
   if (!scenario) notFound()
 
-  return <SessionView scenario={scenario} allScenarios={allScenarios} />
+  return (
+    <SessionView
+      scenario={stripFunctions(scenario)}
+      allScenarios={allScenarios.map(stripFunctions)}
+    />
+  )
 }
