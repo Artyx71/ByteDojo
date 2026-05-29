@@ -2,34 +2,17 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { ChevronDown, ChevronRight, Check } from 'lucide-react'
+import { ChevronDown, ChevronRight } from 'lucide-react'
 import type { Scenario, Category } from '@/entities/scenario/model'
+import { CATEGORY_LABELS, groupByCategory } from '@/entities/scenario/model'
+import { ScenarioCard } from '@/entities/scenario/ui/ScenarioCard'
 import { TopNav } from '@/widgets/top-nav'
-import { Badge } from '@/shared/ui'
 import { routes } from '@/shared/config/routes'
 import { cn } from '@/shared/lib'
-
-const CATEGORY_LABELS: Record<Category, string> = {
-  vim:      'vim',
-  shell:    'shell',
-  git:      'git',
-  tmux:     'tmux',
-  keyboard: 'keyboard',
-}
 
 interface TrainViewProps {
   scenarios: Scenario[]
   completedScenarioIds: Set<string>
-}
-
-function groupByCategory(scenarios: Scenario[]): Map<Category, Scenario[]> {
-  const map = new Map<Category, Scenario[]>()
-  for (const s of scenarios) {
-    const group = map.get(s.category) ?? []
-    group.push(s)
-    map.set(s.category, group)
-  }
-  return map
 }
 
 export function TrainView({ scenarios, completedScenarioIds }: TrainViewProps) {
@@ -90,59 +73,14 @@ export function TrainView({ scenarios, completedScenarioIds }: TrainViewProps) {
                   {/* Cards grid */}
                   {isOpen && (
                     <div className="grid grid-cols-2 gap-3">
-                      {items.map((scenario) => {
-                        const done = completedScenarioIds.has(scenario.id)
-                        return (
-                          <button
-                            key={scenario.id}
-                            onClick={() => router.push(routes.session(scenario.id))}
-                            className={cn(
-                              'flex flex-col p-4 rounded text-left',
-                              'border transition-colors duration-150',
-                              'bg-[var(--surface-2)]',
-                              done
-                                ? 'border-[var(--accent)]/20 hover:border-[var(--accent)]/40'
-                                : 'border-[var(--border)] hover:border-[var(--text-3)]'
-                            )}
-                          >
-                            {/* Title row */}
-                            <div className="flex items-start justify-between gap-2 mb-3">
-                              <span className={cn(
-                                'font-sans text-sm leading-snug',
-                                done ? 'text-[var(--accent)]' : 'text-[var(--text-1)]'
-                              )}>
-                                {scenario.title.replace(/^[^:]+:\s*/, '')}
-                              </span>
-                              {done && (
-                                <Check size={12} className="text-[var(--accent)] shrink-0 mt-0.5" />
-                              )}
-                            </div>
-
-                            {/* Progress bar */}
-                            <div className="h-px bg-[var(--border)] rounded mb-3">
-                              <div
-                                className="h-full bg-[var(--accent)] rounded transition-all"
-                                style={{ width: done ? '100%' : '0%' }}
-                              />
-                            </div>
-
-                            {/* Meta */}
-                            <div className="flex items-center gap-2">
-                              <Badge
-                                variant={
-                                  scenario.difficulty === 'easy'   ? 'muted'    :
-                                  scenario.difficulty === 'medium'  ? 'warning'  : 'danger'
-                                }
-                              >
-                                {scenario.difficulty}
-                              </Badge>
-                              <span className="font-mono text-[10px] text-[var(--text-3)]">
-                                {scenario.estimatedTime}m
-                              </span>
-                            </div>
-                          </button>
-                        )
-                      })}
+                      {items.map((scenario) => (
+                        <ScenarioCard
+                          key={scenario.id}
+                          scenario={scenario}
+                          done={completedScenarioIds.has(scenario.id)}
+                          onClick={() => router.push(routes.session(scenario.id))}
+                        />
+                      ))}
                     </div>
                   )}
                 </section>

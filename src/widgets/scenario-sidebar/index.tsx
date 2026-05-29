@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { ChevronDown, ChevronRight } from 'lucide-react'
 import type { Scenario, Category } from '@/entities/scenario/model'
+import { CATEGORY_LABELS, groupByCategory } from '@/entities/scenario/model'
 import { cn } from '@/shared/lib'
 import { routes } from '@/shared/config/routes'
 
@@ -12,24 +13,6 @@ interface ScenarioSidebarProps {
   activeScenarioId?: string
   completedScenarioIds?: Set<string>
   className?: string
-}
-
-const CATEGORY_LABELS: Record<Category, string> = {
-  vim:      'Vim',
-  shell:    'Shell',
-  git:      'Git',
-  tmux:     'Tmux',
-  keyboard: 'Keyboard',
-}
-
-function groupByCategory(scenarios: Scenario[]): Map<Category, Scenario[]> {
-  const map = new Map<Category, Scenario[]>()
-  for (const s of scenarios) {
-    const group = map.get(s.category) ?? []
-    group.push(s)
-    map.set(s.category, group)
-  }
-  return map
 }
 
 export function ScenarioSidebar({ scenarios, activeScenarioId, completedScenarioIds = new Set(), className }: ScenarioSidebarProps) {
