@@ -87,7 +87,7 @@ function handleGit(
       return ''
 
     case 'commit': {
-      const msg = flags['m'] || args[0]
+      const msg = args[0]
       if (!msg) return new Error('git commit: specify a commit message with -m')
       return `[main abc1234] ${msg}\r\n 1 file changed\r\n`
     }
