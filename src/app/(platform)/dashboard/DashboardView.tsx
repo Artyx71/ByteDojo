@@ -2,8 +2,8 @@
 
 import { useRouter } from 'next/navigation'
 import type { Scenario } from '@/entities/scenario/model'
-import type { Session } from '@/entities/session/model'
 import type { Stats } from '@/entities/profile/model'
+import { useSessionStore } from '@/entities/session/model/store'
 import { TopNav } from '@/widgets/top-nav'
 import { Badge } from '@/shared/ui'
 import { routes } from '@/shared/config/routes'
@@ -11,25 +11,22 @@ import { cn } from '@/shared/lib'
 
 interface DashboardViewProps {
   stats: Stats
-  recentSession: Session | null
   scenarios: Scenario[]
-  completedScenarioIds: Set<string>
 }
 
-export function DashboardView({
-  stats,
-  recentSession,
-  scenarios,
-  completedScenarioIds,
-}: DashboardViewProps) {
+export function DashboardView({ stats, scenarios }: DashboardViewProps) {
   const router = useRouter()
+  const { session, scenario: activeScenario, completedScenarioIds } = useSessionStore()
 
-  const resumeScenario = recentSession
-    ? scenarios.find((s) => s.id === recentSession.scenarioId) ?? null
+  const completedSet = new Set(completedScenarioIds)
+  const completedCount = completedScenarioIds.length
+
+  const resumeScenario = session && activeScenario && session.status === 'active'
+    ? activeScenario
     : null
 
   const quickStart = scenarios
-    .filter((s) => s.difficulty === 'easy' && !completedScenarioIds.has(s.id))
+    .filter((s) => s.difficulty === 'easy' && !completedSet.has(s.id))
     .slice(0, 3)
 
   return (
@@ -48,7 +45,7 @@ export function DashboardView({
             <p className="font-mono text-xs text-[var(--text-3)]">
               {stats.currentStreak}d streak&nbsp;&nbsp;·&nbsp;&nbsp;
               {stats.accuracyPercent}% accuracy&nbsp;&nbsp;·&nbsp;&nbsp;
-              {stats.completedScenarios} scenarios done
+              {completedCount} scenarios done
             </p>
           </div>
 
@@ -60,11 +57,11 @@ export function DashboardView({
             </div>
             <div className="flex flex-col gap-1 text-[var(--text-3)] pl-4">
               <StatusLine label="streak"    value={`${stats.currentStreak} days`} />
-              <StatusLine label="completed" value={`${stats.completedScenarios} scenarios`} />
+              <StatusLine label="completed" value={`${completedCount} scenarios`} />
               <StatusLine label="accuracy"  value={`${stats.accuracyPercent}%`} />
               <StatusLine label="keystrokes" value={String(stats.totalKeystrokes)} />
               {resumeScenario && (
-                <StatusLine label="next" value={resumeScenario.id} accent />
+                <StatusLine label="active" value={resumeScenario.id} accent />
               )}
             </div>
             <div className="mt-3">
@@ -100,6 +97,7 @@ export function DashboardView({
               </div>
             </section>
           )}
+
         </div>
       </main>
     </div>

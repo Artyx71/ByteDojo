@@ -13,6 +13,7 @@ interface SessionStore {
   startedAt: number | null
   stepStartedAt: number | null
   stepResults: StepResult[]
+  completedScenarioIds: string[]
 
   startSession: (scenario: Scenario) => void
   submitCommand: (input: string) => boolean
@@ -32,6 +33,7 @@ export const useSessionStore = create<SessionStore>()(
       startedAt: null,
       stepStartedAt: null,
       stepResults: [],
+      completedScenarioIds: [],
 
       startSession: (scenario) => {
         const now = Date.now()
@@ -84,6 +86,11 @@ export const useSessionStore = create<SessionStore>()(
         const nextIndex = correct ? currentStepIndex + 1 : currentStepIndex
         const isCompleted = correct && nextIndex >= scenario.steps.length
 
+        const { completedScenarioIds } = get()
+        const updatedCompletedIds = isCompleted && !completedScenarioIds.includes(scenario.id)
+          ? [...completedScenarioIds, scenario.id]
+          : completedScenarioIds
+
         set({
           keystrokeHistory: updatedHistory,
           stepResults: updatedResults,
@@ -91,6 +98,7 @@ export const useSessionStore = create<SessionStore>()(
           hintsUsed: 0,
           stepStartedAt: correct ? now : stepStartedAt,
           status: isCompleted ? 'completed' : 'active',
+          completedScenarioIds: updatedCompletedIds,
         })
 
         return correct
@@ -118,6 +126,7 @@ export const useSessionStore = create<SessionStore>()(
       name: 'bytedojo-session',
       partialize: (state) => ({
         stepResults: state.stepResults,
+        completedScenarioIds: state.completedScenarioIds,
       }),
     }
   )
