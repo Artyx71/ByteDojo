@@ -12,11 +12,11 @@ import { MetricsBar } from '@/widgets/metrics-bar'
 interface SessionViewProps {
   scenario: Scenario
   allScenarios: Scenario[]
-  completedScenarioIds: Set<string>
 }
 
-export function SessionView({ scenario, allScenarios, completedScenarioIds }: SessionViewProps) {
-  const { startSession, session } = useSessionStore()
+export function SessionView({ scenario, allScenarios }: SessionViewProps) {
+  const { startSession, session, completedScenarioIds } = useSessionStore()
+  const completedSet = new Set(completedScenarioIds)
 
   useEffect(() => {
     if (session?.scenarioId !== scenario.id) {
@@ -32,7 +32,7 @@ export function SessionView({ scenario, allScenarios, completedScenarioIds }: Se
         <ScenarioSidebar
           scenarios={allScenarios}
           activeScenarioId={scenario.id}
-          completedScenarioIds={completedScenarioIds}
+          completedScenarioIds={completedSet}
         />
 
         <div className="flex-1 flex flex-col overflow-hidden">

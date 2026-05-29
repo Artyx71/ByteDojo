@@ -6,16 +6,17 @@ import { ChevronDown, ChevronRight } from 'lucide-react'
 import type { Scenario, Category } from '@/entities/scenario/model'
 import { CATEGORY_LABELS, groupByCategory } from '@/entities/scenario/model'
 import { ScenarioCard } from '@/entities/scenario/ui/ScenarioCard'
+import { useSessionStore } from '@/entities/session/model/store'
 import { TopNav } from '@/widgets/top-nav'
 import { routes } from '@/shared/config/routes'
 import { cn } from '@/shared/lib'
 
 interface TrainViewProps {
   scenarios: Scenario[]
-  completedScenarioIds: Set<string>
 }
 
-export function TrainView({ scenarios, completedScenarioIds }: TrainViewProps) {
+export function TrainView({ scenarios }: TrainViewProps) {
+  const completedScenarioIds = new Set(useSessionStore((s) => s.completedScenarioIds))
   const router = useRouter()
   const grouped = groupByCategory(scenarios)
   const categories = Array.from(grouped.keys())
