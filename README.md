@@ -1,7 +1,7 @@
 # ByteDojo
 
 Terminal-first platform for training developer muscle memory.
-
+ 
 Not LeetCode. Not courses. Not Duolingo.  
 Real terminal workflows — practiced until they become reflex.
 
