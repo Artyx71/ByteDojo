@@ -8,6 +8,7 @@ import { ScenarioSidebar } from '@/widgets/scenario-sidebar'
 import { TerminalPanel } from '@/widgets/terminal-panel'
 import { TaskPanel } from '@/widgets/task-panel'
 import { MetricsBar } from '@/widgets/metrics-bar'
+import { SessionComplete } from '@/widgets/session-complete'
 
 interface SessionViewProps {
   scenario: Scenario
@@ -15,7 +16,7 @@ interface SessionViewProps {
 }
 
 export function SessionView({ scenario, allScenarios }: SessionViewProps) {
-  const { startSession, session, completedScenarioIds } = useSessionStore()
+  const { startSession, session, status, completedScenarioIds } = useSessionStore()
   const completedSet = new Set(completedScenarioIds)
 
   useEffect(() => {
@@ -35,10 +36,14 @@ export function SessionView({ scenario, allScenarios }: SessionViewProps) {
           completedScenarioIds={completedSet}
         />
 
-        <div className="flex-1 flex flex-col overflow-hidden">
-          <TerminalPanel />
-          <MetricsBar />
-        </div>
+        {status === 'completed' ? (
+          <SessionComplete scenario={scenario} allScenarios={allScenarios} />
+        ) : (
+          <div className="flex-1 flex flex-col overflow-hidden">
+            <TerminalPanel />
+            <MetricsBar />
+          </div>
+        )}
 
         <TaskPanel />
       </div>
