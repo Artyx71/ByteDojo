@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { CheckCircle2, Circle, ArrowRight } from 'lucide-react'
 import { useSessionStore } from '@/entities/session/model/store'
 import { Kbd } from '@/shared/ui'
@@ -13,6 +13,8 @@ interface TaskPanelProps {
 export function TaskPanel({ className }: TaskPanelProps) {
   const { scenario, currentStepIndex, hintsUsed, useHint } = useSessionStore()
   const [hintVisible, setHintVisible] = useState(false)
+
+  useEffect(() => { setHintVisible(false) }, [currentStepIndex])
 
   if (!scenario) return null
 
