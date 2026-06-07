@@ -1,7 +1,7 @@
 # Graph Report - /home/artyx/projects/ByteDojo  (2026-06-07)
 
 ## Corpus Check
-- 51 files · ~22,285 words
+- 51 files · ~22,477 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary

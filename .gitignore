@@ -43,6 +43,7 @@ next-env.d.ts
 # private context
 /docs
 /.superpowers
+CLAUDE.md
 
 # graphify
 graphify-out/.graphify_python
