@@ -43,3 +43,7 @@ next-env.d.ts
 # private context
 /docs
 /.superpowers
+
+# graphify
+graphify-out/.graphify_python
+graphify-out/cache/

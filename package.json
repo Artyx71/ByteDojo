@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "graph": "python3 -m graphify src"
   },
   "dependencies": {
     "@xterm/addon-fit": "^0.11.0",
