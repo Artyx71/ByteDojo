@@ -29,12 +29,20 @@ export const CATEGORY_LABELS: Record<Category, string> = {
   keyboard: 'Keyboard',
 }
 
+// Canonical learning order: shell foundation → vim muscle memory → git workflows
+// Phase 2: replace with `order` field from DB
+export const CATEGORY_ORDER: Category[] = ['shell', 'vim', 'git', 'tmux', 'keyboard']
+
 export function groupByCategory(scenarios: Scenario[]): Map<Category, Scenario[]> {
-  const map = new Map<Category, Scenario[]>()
+  const raw = new Map<Category, Scenario[]>()
   for (const s of scenarios) {
-    const group = map.get(s.category) ?? []
+    const group = raw.get(s.category) ?? []
     group.push(s)
-    map.set(s.category, group)
+    raw.set(s.category, group)
   }
-  return map
+  const ordered = new Map<Category, Scenario[]>()
+  for (const cat of CATEGORY_ORDER) {
+    if (raw.has(cat)) ordered.set(cat, raw.get(cat)!)
+  }
+  return ordered
 }
