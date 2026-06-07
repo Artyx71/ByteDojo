@@ -3,6 +3,7 @@
 import { TopNav } from '@/widgets/top-nav'
 import type { Profile } from '@/entities/profile/model'
 import { CATEGORY_LABELS } from '@/entities/scenario/model'
+import { useSessionStore } from '@/entities/session/model/store'
 import { formatTimeShort } from '@/shared/lib'
 
 interface ProfileViewProps {
@@ -36,7 +37,22 @@ function StatCard({ label, value, sub }: StatCardProps) {
 }
 
 export function ProfileView({ profile }: ProfileViewProps) {
-  const { stats } = profile
+  const { stepResults, completedScenarioIds } = useSessionStore()
+
+  const correctResults  = stepResults.filter((r) => r.correct)
+  const liveStats = {
+    completedScenarios: completedScenarioIds.length,
+    totalKeystrokes:    stepResults.reduce((s, r) => s + r.keystrokes, 0),
+    accuracyPercent:    stepResults.length
+      ? Math.round((correctResults.length / stepResults.length) * 100)
+      : 100,
+    avgTimePerStepMs:   correctResults.length
+      ? Math.round(correctResults.reduce((s, r) => s + r.timeMs, 0) / correctResults.length)
+      : 0,
+    totalHintsUsed:     stepResults.reduce((s, r) => s + r.hintsUsed, 0),
+  }
+
+  const stats = { ...profile.stats, ...liveStats }
   const joined = daysSince(profile.joinedAt)
   const categories = Object.entries(stats.byCategory) as [
     keyof typeof CATEGORY_LABELS,
